@@ -72,7 +72,7 @@ async function shopifyFetch<T>({ cache = 'force-cache', headers, query, tags, va
         ...(variables && { variables })
       }),
       cache,
-      ...(tags && { next: { tags } })
+      ...(tags && { next: { tags, revalidate: 60 } })
     });
 
     const body = await result.json();
