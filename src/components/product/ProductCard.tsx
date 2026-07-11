@@ -8,6 +8,7 @@ import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/store/useCartStore';
 import { useWishlistStore } from '@/store/useWishlistStore';
 import { Button } from '../ui/button';
+import { toast } from 'sonner';
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const { addItem: addToCart } = useCartStore();
@@ -64,9 +65,10 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
             size="icon"
             aria-label={`Quick add ${product.title} to cart`}
             className="w-8 h-8 rounded-full shadow-md lg:hidden absolute right-0 bottom-0 bg-primary text-primary-foreground"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
-              addToCart(product.variants?.edges?.[0]?.node?.id || product.id, 1);
+              await addToCart(product.variants?.edges?.[0]?.node?.id || product.id, 1);
+              toast.success(`${product.title} added to cart`);
             }}
           >
             <ShoppingBag aria-hidden="true" className="w-4 h-4" />
@@ -75,9 +77,10 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
           <Button 
             aria-label={`Quick add ${product.title} to cart`}
             className="w-full shadow-lg hidden lg:flex"
-            onClick={(e) => {
+            onClick={async (e) => {
               e.preventDefault();
-              addToCart(product.variants?.edges?.[0]?.node?.id || product.id, 1);
+              await addToCart(product.variants?.edges?.[0]?.node?.id || product.id, 1);
+              toast.success(`${product.title} added to cart`);
             }}
           >
             <ShoppingBag aria-hidden="true" className="w-4 h-4 mr-2" />

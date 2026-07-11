@@ -8,6 +8,7 @@ import { ShopifyProduct } from '@/lib/shopify';
 import { useCartStore } from '@/store/useCartStore';
 import { useWishlistStore } from '@/store/useWishlistStore';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ProductCard } from '@/components/product/ProductCard';
@@ -42,9 +43,11 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
     setMousePos({ x, y });
   };
 
+
+
   const handleAddToCart = async () => {
     if (!selectedSize) {
-      alert("Please select a size");
+      toast.error("Please select a size");
       return;
     }
     
@@ -53,7 +56,7 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
     const variantId = product.variants?.edges?.[0]?.node?.id || product.id;
     
     await addToCart(variantId, 1);
-    alert("Added to cart!");
+    toast.success("Added to cart!");
   };
 
   return (
