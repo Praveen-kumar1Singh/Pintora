@@ -184,7 +184,8 @@ export function CartDrawer({ isMobileNav, children }: CartDrawerProps) {
                     size="lg" 
                     onClick={() => {
                       setIsOpen(false);
-                      useAuthStore.getState().setAuthModalOpen(true);
+                      const pathname = window.location.pathname;
+                      window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
                     }}
                     className="w-full h-14 text-base uppercase tracking-widest font-semibold rounded-none shadow-xl"
                   >

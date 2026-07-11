@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Toaster } from '@/components/ui/sonner';
-import { AuthModal } from '@/components/auth/AuthModal';
+import { Providers } from '@/components/providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -69,14 +69,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} min-h-screen flex flex-col antialiased selection:bg-primary selection:text-primary-foreground`}>
-        <Navbar />
-        <main className="flex-grow pt-24 md:pt-28">
-          {children}
-        </main>
-        <Footer />
-        <BottomNav />
-        <AuthModal />
-        <Toaster />
+        <Providers>
+          <Navbar />
+          <main className="flex-grow pt-24 md:pt-28">
+            {children}
+          </main>
+          <Footer />
+          <BottomNav />
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

@@ -48,10 +48,10 @@ export function BottomNav() {
               <span className={`text-[10px] uppercase tracking-widest font-semibold ${pathname.startsWith('/profile') ? 'text-foreground' : ''}`}>Profile</span>
             </Link>
           ) : (
-            <button onClick={() => useAuthStore.getState().setAuthModalOpen(true)} className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground" aria-label="Login">
+            <Link href="/login" className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground" aria-label="Login">
               <User className="w-5 h-5 mb-1" />
               <span className="text-[10px] uppercase tracking-widest font-semibold">Login</span>
-            </button>
+            </Link>
           )}
 
           {/* Cart Drawer Wrapper for Mobile Nav */}

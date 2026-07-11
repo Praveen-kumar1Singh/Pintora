@@ -10,10 +10,8 @@ interface User {
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
-  isAuthModalOpen: boolean;
   login: (userData: User) => void;
   logout: () => void;
-  setAuthModalOpen: (isOpen: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -21,10 +19,8 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       isAuthenticated: false,
       user: null,
-      isAuthModalOpen: false,
-      login: (userData) => set({ isAuthenticated: true, user: userData, isAuthModalOpen: false }),
+      login: (userData) => set({ isAuthenticated: true, user: userData }),
       logout: () => set({ isAuthenticated: false, user: null }),
-      setAuthModalOpen: (isOpen) => set({ isAuthModalOpen: isOpen }),
     }),
     {
       name: 'printora-auth-storage',

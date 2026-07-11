@@ -142,15 +142,11 @@ export function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="hidden lg:flex" 
-                  aria-label="Login"
-                  onClick={() => useAuthStore.getState().setAuthModalOpen(true)}
-                >
-                  <User className="w-5 h-5" />
-                </Button>
+                <Link href="/login" aria-label="Login">
+                  <Button variant="ghost" size="icon" className="hidden lg:flex">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </Link>
               )}
               <Link href="/wishlist" className="relative hidden md:block" aria-label="Wishlist">
                 <Button variant="ghost" size="icon" aria-label="Wishlist">
