@@ -44,15 +44,6 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
             className="object-cover transition-transform duration-1000 group-hover:scale-110"
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
           />
-          {product.images.edges[1] && (
-            <Image
-              src={product.images.edges[1].node.url}
-              alt={product.title}
-              fill
-              className="object-cover absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-            />
-          )}
         </Link>
         
         {/* Quick Actions overlay */}
