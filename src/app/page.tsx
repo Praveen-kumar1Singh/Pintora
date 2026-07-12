@@ -196,7 +196,7 @@ export default function Home() {
       </section>
 
       {/* 6. Customer Reviews */}
-      <section className="bg-background overflow-hidden relative border-t">
+      <section className="py-12 bg-background overflow-hidden relative border-t">
         <div className="container mx-auto px-4 lg:px-8 mb-16 flex justify-between items-end">
           <div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">The Word on the Street</h2>
@@ -208,24 +208,26 @@ export default function Home() {
         </div>
 
         {/* Infinite Marquee Slider */}
-        <div className="flex gap-6 px-4 pb-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar group">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="min-w-[320px] md:min-w-[420px] bg-muted/30 p-8 rounded-none snap-center shrink-0 border border-border hover:border-black transition-colors">
-              <div className="flex text-black mb-6">
-                {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-black" />)}
-              </div>
-              <p className="text-lg font-medium mb-8">"Absolutely love the fit and quality. The oversized tees are perfect. Better than most international brands I've tried. Will definitely buy again!"</p>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-muted rounded-full overflow-hidden">
-                  <Image src={`https://i.pravatar.cc/150?img=${i + 15}`} alt="User" width={48} height={48} />
+        <div className="flex overflow-hidden group pb-8">
+          <div className="flex gap-6 w-max animate-marquee pause-marquee px-4">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="w-[320px] md:w-[420px] bg-muted/30 p-8 rounded-none shrink-0 border border-border hover:border-black transition-colors">
+                <div className="flex text-black mb-6">
+                  {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-black" />)}
                 </div>
-                <div>
-                  <p className="font-bold text-sm uppercase tracking-wider">Verified Buyer</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Mumbai, India</p>
+                <p className="text-lg font-medium mb-8">"Absolutely love the fit and quality. The oversized tees are perfect. Better than most international brands I've tried. Will definitely buy again!"</p>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-muted rounded-full overflow-hidden">
+                    <Image src={`https://i.pravatar.cc/150?img=${(i % 6) + 15}`} alt="User" width={48} height={48} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm uppercase tracking-wider">Verified Buyer</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Mumbai, India</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
