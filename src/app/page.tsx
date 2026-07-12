@@ -209,9 +209,15 @@ export default function Home() {
 
         {/* Infinite Marquee Slider */}
         <div className="flex overflow-hidden group pb-8">
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes marquee-scroll {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(calc(-50% - 12px)); }
+            }
+          `}} />
           <div 
             className="flex gap-6 w-max px-4 hover:[animation-play-state:paused]"
-            style={{ animation: 'marquee 30s linear infinite' }}
+            style={{ animation: 'marquee-scroll 30s linear infinite' }}
           >
             {[...Array(12)].map((_, i) => (
               <div key={i} className="w-[320px] md:w-[420px] bg-muted/30 p-8 rounded-none shrink-0 border border-border hover:border-black transition-colors">
