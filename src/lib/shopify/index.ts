@@ -163,7 +163,19 @@ export async function getCollectionProducts(handle: string): Promise<{ collectio
       tags: ['collection']
     });
     const collection = res.body.data.collection;
-    if (!collection) return { collection: null, products: [] };
+    if (!collection) {
+      // Fallback for template links if collection doesn't exist
+      const fallbackProducts = await getProducts();
+      return { 
+        collection: {
+          id: `fallback-${handle}`,
+          title: handle.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+          handle: handle,
+          description: `Explore our premium ${handle.split('-').join(' ')} collection.`,
+        }, 
+        products: fallbackProducts 
+      };
+    }
     
     return {
       collection: {
@@ -176,7 +188,16 @@ export async function getCollectionProducts(handle: string): Promise<{ collectio
       products: collection.products.edges.map((edge: any) => edge.node) || []
     };
   } catch (e) {
-    return { collection: null, products: [] };
+    const fallbackProducts = await getProducts();
+    return { 
+      collection: {
+        id: `fallback-${handle}`,
+        title: handle.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        handle: handle,
+        description: `Explore our premium ${handle.split('-').join(' ')} collection.`,
+      }, 
+      products: fallbackProducts 
+    };
   }
 }
 
