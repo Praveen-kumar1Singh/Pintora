@@ -207,11 +207,11 @@ export function CollectionClient({ products: initialProducts, collectionHandle, 
       <div className="container mx-auto px-4 lg:px-8">
         {/* Breadcrumb */}
         <nav className="flex items-center text-sm text-muted-foreground mb-8">
-          <Link href="/" className="hover:text-foreground transition-colors flex items-center">
+          <Link href="/shop" className="hover:text-foreground transition-colors flex items-center">
             <Home className="w-4 h-4" />
           </Link>
           <ChevronRight className="w-4 h-4 mx-2" />
-          <Link href="/collections" className="hover:text-foreground transition-colors">Collections</Link>
+          <Link href="/shop" className="hover:text-foreground transition-colors">Shop</Link>
           <ChevronRight className="w-4 h-4 mx-2" />
           <span className="text-foreground font-semibold uppercase tracking-wider">{collectionInfo.title}</span>
         </nav>

@@ -86,9 +86,9 @@ export function Navbar() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-[300px] sm:w-[400px]">
                   <nav className="flex flex-col gap-6 mt-10">
-                    <Link href="/shop" className={`text-xl font-medium uppercase ${pathname === '/shop' ? 'text-primary font-bold' : ''}`}>Shop</Link>
-                    <Link href="/collections" className={`text-xl font-medium uppercase ${pathname === '/collections' ? 'text-primary font-bold' : ''}`}>Collections</Link>
                     <Link href="/" className={`text-xl font-medium uppercase ${pathname === '/' ? 'text-primary font-bold' : ''}`}>Home</Link>
+                    <Link href="/shop" className={`text-xl font-medium uppercase ${pathname === '/shop' ? 'text-primary font-bold' : ''}`}>Shop</Link>
+                    <Link href="/shop?sort=newest" className={`text-xl font-medium uppercase ${pathname === '/shop' && (typeof window !== 'undefined' && window.location.search.includes('sort=newest')) ? 'text-primary font-bold' : ''}`}>New</Link>
                   </nav>
                 </SheetContent>
               </Sheet>
@@ -96,6 +96,7 @@ export function Navbar() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8 font-medium text-sm tracking-wide uppercase flex-1 relative">
+              <Link href="/" className={`py-6 transition-colors ${pathname === '/' ? 'text-primary font-bold' : 'hover:text-primary'}`}>Home</Link>
               <div 
                 className="group py-6 cursor-pointer"
                 tabIndex={0}
@@ -160,9 +161,7 @@ export function Navbar() {
                 </div>
               </div>
 
-              <Link href="/collections" className={`py-6 transition-colors ${pathname === '/collections' ? 'text-primary font-bold' : 'hover:text-primary'}`}>Collections</Link>
               <Link href="/shop?sort=newest" className={`py-6 transition-colors ${pathname === '/shop' && (typeof window !== 'undefined' && window.location.search.includes('sort=newest')) ? 'text-primary font-bold' : 'hover:text-primary'}`}>New</Link>
-              <Link href="/" className={`py-6 transition-colors ${pathname === '/' ? 'text-primary font-bold' : 'hover:text-primary'}`}>Home</Link>
             </nav>
 
             {/* Logo */}
