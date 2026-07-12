@@ -70,7 +70,7 @@ export default function Home() {
       </Suspense>
 
       {/* 4. Best Sellers */}
-      <section className="py-24 bg-background">
+      <section className="py-12 md:py-20 bg-background">
         <div className="container px-4 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -93,7 +93,7 @@ export default function Home() {
       </section>
 
       {/* 4.5 Featured Products */}
-      <section className="py-24 bg-muted/30">
+      <section className="py-12 md:py-20 bg-muted/30">
         <div className="container px-4 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -124,7 +124,7 @@ export default function Home() {
       </section>
 
       {/* 5. Why Printora? */}
-      <section className="py-24 bg-foreground text-background">
+      <section className="py-16 md:py-24 bg-foreground text-background">
         <div className="container px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">The Printora Standard</h2>
@@ -196,7 +196,7 @@ export default function Home() {
       </section>
 
       {/* 6. Customer Reviews */}
-      <section className="py-24 bg-background overflow-hidden relative border-t">
+      <section className="py-12 md:py-20 bg-background overflow-hidden relative border-t">
         <div className="container px-4 lg:px-8 mb-16 flex justify-between items-end">
           <div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">The Word on the Street</h2>
@@ -230,7 +230,7 @@ export default function Home() {
       </section>
 
       {/* 7. Instagram Community (Masonry) */}
-      <section className="py-24 bg-muted/20">
+      <section className="py-12 md:py-20 bg-muted/20">
         <div className="container px-4 lg:px-8 text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Join The Movement</h2>
           <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">Tag @Printora.Official to be featured</p>
@@ -241,37 +241,37 @@ export default function Home() {
             {/* Masonry Layout Mock */}
             <div className="flex flex-col gap-4">
               <div className="relative aspect-[3/4] bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p1/600/800" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="relative aspect-square bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1618002621021-0a6b7d722d56?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p2/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
             
             <div className="flex flex-col gap-4 md:mt-12">
               <div className="relative aspect-square bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p3/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="relative aspect-[3/4] bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p4/600/800" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
 
             <div className="flex flex-col gap-4">
               <div className="relative aspect-[3/4] bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p5/600/800" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="relative aspect-square bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1550614000-4b95d466f3ab?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p6/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
 
             <div className="flex flex-col gap-4 md:mt-12">
               <div className="relative aspect-square bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p7/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="relative aspect-[3/4] bg-muted group overflow-hidden rounded-lg">
-                <Image src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&auto=format&fit=crop" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image src="https://picsum.photos/seed/p8/600/800" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
           </div>
