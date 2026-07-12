@@ -48,8 +48,8 @@ export function ShopByCategory({ collections }: ShopByCategoryProps) {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-20 md:py-32 bg-muted/20">
-      <div className="container px-4 lg:px-8 mb-12">
+    <section ref={containerRef} className="py-8 md:py-12 bg-muted/20">
+      <div className="container mx-auto px-4 lg:px-8 mb-12">
         <h2 className="sbc-header text-3xl md:text-5xl font-black uppercase tracking-tighter flex items-center gap-4">
           <span className="text-primary text-4xl md:text-5xl">🔥</span> Shop By Category
         </h2>

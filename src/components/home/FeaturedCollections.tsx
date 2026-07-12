@@ -55,10 +55,10 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-24 bg-background overflow-hidden relative">
-      <div className="container px-4 lg:px-8 mb-12 flex justify-between items-end">
+    <section ref={containerRef} className="py-4 bg-background overflow-hidden relative">
+      <div className="container mx-auto px-4 lg:px-8 mb-12 flex justify-between items-end">
         <h2 className="fc-header text-3xl md:text-5xl font-black uppercase tracking-tighter">
-          Curated <br />Collections
+          Curated Collections
         </h2>
         <Link href="/collections" className="fc-header hidden md:flex items-center gap-2 font-bold uppercase tracking-wider hover:text-primary transition-colors">
           View All <ArrowRight className="w-5 h-5" />

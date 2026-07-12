@@ -70,8 +70,8 @@ export default function Home() {
       </Suspense>
 
       {/* 4. Best Sellers */}
-      <section className="py-12 md:py-20 bg-background">
-        <div className="container px-4 lg:px-8">
+      <section className="bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Best Sellers</h2>
@@ -85,7 +85,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          
+
           <Suspense fallback={<SectionSkeleton />}>
             <BestSellersSection />
           </Suspense>
@@ -94,7 +94,7 @@ export default function Home() {
 
       {/* 4.5 Featured Products */}
       <section className="py-12 md:py-20 bg-muted/30">
-        <div className="container px-4 lg:px-8">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Featured Products</h2>
@@ -108,11 +108,11 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-          
+
           <Suspense fallback={<SectionSkeleton />}>
             <FeaturedProductsSection />
           </Suspense>
-          
+
           <div className="mt-12 text-center md:hidden">
             <Link href="/shop">
               <Button variant="outline" className="w-full uppercase tracking-widest font-semibold">
@@ -125,12 +125,12 @@ export default function Home() {
 
       {/* 5. Why Printora? */}
       <section className="py-16 md:py-24 bg-foreground text-background">
-        <div className="container px-4 lg:px-8">
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">The Printora Standard</h2>
             <p className="text-background/70 max-w-2xl mx-auto">We don't compromise on quality. Every piece is engineered for perfection.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
             <div className="flex gap-4">
               <div className="w-12 h-12 shrink-0 bg-background/10 rounded-full flex items-center justify-center text-background">
@@ -141,7 +141,7 @@ export default function Home() {
                 <p className="text-background/70 text-sm leading-relaxed">Heavyweight, ultra-soft combed cotton that drapes perfectly and lasts forever.</p>
               </div>
             </div>
-            
+
             <div className="flex gap-4">
               <div className="w-12 h-12 shrink-0 bg-background/10 rounded-full flex items-center justify-center text-background">
                 <Zap className="w-5 h-5" />
@@ -196,17 +196,17 @@ export default function Home() {
       </section>
 
       {/* 6. Customer Reviews */}
-      <section className="py-12 md:py-20 bg-background overflow-hidden relative border-t">
-        <div className="container px-4 lg:px-8 mb-16 flex justify-between items-end">
+      <section className="bg-background overflow-hidden relative border-t">
+        <div className="container mx-auto px-4 lg:px-8 mb-16 flex justify-between items-end">
           <div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">The Word on the Street</h2>
             <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest">
-              <span className="flex text-black"><Star className="w-4 h-4 fill-black"/><Star className="w-4 h-4 fill-black"/><Star className="w-4 h-4 fill-black"/><Star className="w-4 h-4 fill-black"/><Star className="w-4 h-4 fill-black"/></span>
+              <span className="flex text-black"><Star className="w-4 h-4 fill-black" /><Star className="w-4 h-4 fill-black" /><Star className="w-4 h-4 fill-black" /><Star className="w-4 h-4 fill-black" /><Star className="w-4 h-4 fill-black" /></span>
               4.9/5 based on 10,000+ reviews
             </div>
           </div>
         </div>
-        
+
         {/* Infinite Marquee Slider */}
         <div className="flex gap-6 px-4 pb-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar group">
           {[...Array(6)].map((_, i) => (
@@ -231,12 +231,12 @@ export default function Home() {
 
       {/* 7. Instagram Community (Masonry) */}
       <section className="py-12 md:py-20 bg-muted/20">
-        <div className="container px-4 lg:px-8 text-center mb-16">
+        <div className="container mx-auto px-4 lg:px-8 text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">Join The Movement</h2>
           <p className="text-muted-foreground uppercase tracking-widest text-sm font-bold">Tag @Printora.Official to be featured</p>
         </div>
-        
-        <div className="container px-4 lg:px-8">
+
+        <div className="container mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Masonry Layout Mock */}
             <div className="flex flex-col gap-4">
@@ -247,7 +247,7 @@ export default function Home() {
                 <Image src="https://picsum.photos/seed/p2/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
-            
+
             <div className="flex flex-col gap-4 md:mt-12">
               <div className="relative aspect-square bg-muted group overflow-hidden rounded-lg">
                 <Image src="https://picsum.photos/seed/p3/600/600" alt="IG" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -275,7 +275,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-12 text-center">
             <Link href="https://instagram.com" target="_blank">
               <Button variant="outline" className="uppercase tracking-widest font-bold px-8 h-12 rounded-none border-black hover:bg-black hover:text-white transition-colors">
