@@ -128,6 +128,30 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
     }
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    const shareData = {
+      title: product.title,
+      text: `Check out ${product.title} at Printora`,
+      url,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // user aborted share
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard!");
+      } catch (err) {
+        toast.error("Failed to copy link");
+      }
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 lg:px-8 py-8 md:py-12">
       {/* Product Top Section */}
@@ -194,7 +218,12 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
             
             {/* Overlay Buttons */}
             <div className="absolute top-4 right-4 flex flex-col gap-3 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button size="icon" variant="secondary" className="rounded-full shadow-md bg-background/80 backdrop-blur-md w-11 h-11">
+              <Button 
+                size="icon" 
+                variant="secondary" 
+                className="rounded-full shadow-md bg-background/80 backdrop-blur-md w-11 h-11"
+                onClick={(e) => { e.stopPropagation(); handleShare(); }}
+              >
                 <Share2 className="w-5 h-5" />
               </Button>
               <Button 
