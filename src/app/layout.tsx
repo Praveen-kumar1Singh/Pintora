@@ -5,7 +5,6 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Toaster } from '@/components/ui/sonner';
-import { Providers } from '@/components/providers';
 import { ThemeProvider } from '@/components/theme-provider';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 
@@ -77,16 +76,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Providers>
-            <Navbar />
-            <main className="flex-grow pt-24 md:pt-18">
-              {children}
-            </main>
-            <Footer />
-            <BottomNav />
-            <CartDrawer />
-            <Toaster />
-          </Providers>
+          <Navbar />
+          <main className="flex-grow pt-24 md:pt-18">
+            {children}
+          </main>
+          <Footer />
+          <BottomNav />
+          <CartDrawer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
