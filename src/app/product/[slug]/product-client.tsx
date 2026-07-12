@@ -132,7 +132,6 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
     const url = window.location.href;
     const shareData = {
       title: product.title,
-      text: `Check out ${product.title} at Printora`,
       url,
     };
 
