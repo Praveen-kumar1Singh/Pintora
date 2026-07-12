@@ -74,7 +74,7 @@ export function HeroSection() {
           sizes="100vw"
         />
         </div>
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       </div>
 
       <div className="relative z-10 container px-4 lg:px-8 text-center text-white flex flex-col items-center mt-12">
