@@ -1,19 +1,60 @@
-export const cartCreateMutation = `
-  mutation cartCreate($input: CartInput) {
-    cartCreate(input: $input) {
-      cart {
+const cartFragment = `
+  id
+  checkoutUrl
+  cost {
+    subtotalAmount {
+      amount
+      currencyCode
+    }
+    totalAmount {
+      amount
+      currencyCode
+    }
+    totalTaxAmount {
+      amount
+      currencyCode
+    }
+  }
+  lines(first: 100) {
+    edges {
+      node {
         id
-        checkoutUrl
+        quantity
         cost {
-          subtotalAmount {
-            amount
-            currencyCode
-          }
           totalAmount {
             amount
             currencyCode
           }
         }
+        merchandise {
+          ... on ProductVariant {
+            id
+            title
+            product {
+              id
+              title
+              handle
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const cartCreateMutation = `
+  mutation cartCreate($input: CartInput) {
+    cartCreate(input: $input) {
+      cart {
+        ${cartFragment}
       }
       userErrors {
         field
@@ -27,18 +68,7 @@ export const cartLinesAddMutation = `
   mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
     cartLinesAdd(cartId: $cartId, lines: $lines) {
       cart {
-        id
-        checkoutUrl
-        cost {
-          subtotalAmount {
-            amount
-            currencyCode
-          }
-          totalAmount {
-            amount
-            currencyCode
-          }
-        }
+        ${cartFragment}
       }
       userErrors {
         field
@@ -52,18 +82,7 @@ export const cartLinesUpdateMutation = `
   mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
     cartLinesUpdate(cartId: $cartId, lines: $lines) {
       cart {
-        id
-        checkoutUrl
-        cost {
-          subtotalAmount {
-            amount
-            currencyCode
-          }
-          totalAmount {
-            amount
-            currencyCode
-          }
-        }
+        ${cartFragment}
       }
       userErrors {
         field
@@ -77,18 +96,7 @@ export const cartLinesRemoveMutation = `
   mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
-        id
-        checkoutUrl
-        cost {
-          subtotalAmount {
-            amount
-            currencyCode
-          }
-          totalAmount {
-            amount
-            currencyCode
-          }
-        }
+        ${cartFragment}
       }
       userErrors {
         field

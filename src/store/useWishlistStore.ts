@@ -6,6 +6,7 @@ interface WishlistState {
   items: ShopifyProduct[];
   addItem: (item: ShopifyProduct) => void;
   removeItem: (id: string) => void;
+  syncItems: (products: ShopifyProduct[]) => void;
   isInWishlist: (id: string) => boolean;
 }
 
@@ -25,6 +26,9 @@ export const useWishlistStore = create<WishlistState>()(
         set((state) => ({
           items: state.items.filter((i) => i.id !== id),
         }));
+      },
+      syncItems: (products) => {
+        set({ items: products });
       },
       isInWishlist: (id) => {
         const { items } = get();

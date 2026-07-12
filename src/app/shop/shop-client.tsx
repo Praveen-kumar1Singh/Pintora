@@ -19,8 +19,8 @@ interface ShopClientProps {
 }
 
 const CATEGORIES = ['All', 'Oversized Tees', 'Hoodies', 'Shirts', 'Joggers', 'Caps', 'Accessories'];
-const SIZES = ['S', 'M', 'L', 'XL', 'XXL', 'One Size'];
-const COLORS = ['Black', 'White', 'Electric Blue', 'Grey'];
+const SIZES_FALLBACK = ['S', 'M', 'L', 'XL', 'XXL'];
+const COLORS_FALLBACK = ['Black', 'White'];
 
 export function ShopClient({ initialProducts, initialCategory }: ShopClientProps) {
   const [isMounted, setIsMounted] = useState(false);
@@ -37,6 +37,28 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
     setIsMounted(true);
   }, []);
 
+  // Extract real sizes and colors from Shopify products
+  const availableSizes = useMemo(() => {
+    const sizes = new Set<string>();
+    initialProducts.forEach(p => {
+      const sizeOption = p.options?.find(o => o.name.toLowerCase() === 'size');
+      if (sizeOption) sizeOption.values.forEach(v => sizes.add(v));
+    });
+    const result = Array.from(sizes);
+    return result.length > 0 ? result : SIZES_FALLBACK;
+  }, [initialProducts]);
+
+  const availableColors = useMemo(() => {
+    const colors = new Set<string>();
+    initialProducts.forEach(p => {
+      const colorOption = p.options?.find(o => o.name.toLowerCase() === 'color');
+      if (colorOption) colorOption.values.forEach(v => colors.add(v));
+    });
+    const result = Array.from(colors);
+    return result.length > 0 ? result : COLORS_FALLBACK;
+  }, [initialProducts]);
+
+
   // Filter Logic
   const filteredProducts = useMemo(() => {
     return initialProducts
@@ -46,9 +68,21 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
         const price = parseFloat(p.priceRange.minVariantPrice.amount);
         if (price < priceRange[0] || price > priceRange[1]) return false;
 
-        // In a real app with real Shopify variants, we'd filter by checking variants here.
-        // Since it's mock data mapped to ShopifyProduct format loosely, we will skip deep variant filtering 
-        // to keep it simple, but we can simulate it if needed.
+        // Filter by size
+        if (selectedSizes.length > 0) {
+          const sizeOption = p.options?.find(o => o.name.toLowerCase() === 'size');
+          if (!sizeOption || !sizeOption.values.some(v => selectedSizes.includes(v))) {
+            return false;
+          }
+        }
+        
+        // Filter by color
+        if (selectedColors.length > 0) {
+          const colorOption = p.options?.find(o => o.name.toLowerCase() === 'color');
+          if (!colorOption || !colorOption.values.some(v => selectedColors.includes(v))) {
+            return false;
+          }
+        }
         
         return true;
       })
@@ -110,7 +144,7 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
           <AccordionTrigger className="font-bold uppercase tracking-wider text-sm hover:no-underline py-2">Size</AccordionTrigger>
           <AccordionContent className="pt-2">
             <div className="grid grid-cols-3 gap-2">
-              {SIZES.map((size) => (
+              {availableSizes.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size])}
@@ -130,7 +164,7 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
           <AccordionTrigger className="font-bold uppercase tracking-wider text-sm hover:no-underline py-2">Color</AccordionTrigger>
           <AccordionContent className="pt-2">
             <div className="flex flex-col gap-3">
-              {COLORS.map((c) => (
+              {availableColors.map((c) => (
                 <div key={c} className="flex items-center space-x-2">
                   <Checkbox 
                     id={`color-${c}`} 

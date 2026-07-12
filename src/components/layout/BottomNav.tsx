@@ -5,16 +5,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, ShoppingBag, User, LayoutGrid } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
-import { useAuthStore } from '@/store/useAuthStore';
 import { Badge } from '@/components/ui/badge';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
-import { CartDrawer } from '@/components/cart/CartDrawer';
 
 export function BottomNav() {
   const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { isAuthenticated } = useAuthStore();
-  const cart = useCartStore((state: any) => state.cart);
+  const { cart, setDrawerOpen } = useCartStore((state: any) => state);
+  const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '';
+  const accountUrl = shopifyDomain ? `https://${shopifyDomain}/account` : '#';
   const cartCount = cart?.lines?.edges?.reduce((acc: number, item: any) => acc + item.node.quantity, 0) || 0;
 
   // Hide on admin and auth routes
@@ -42,22 +41,20 @@ export function BottomNav() {
             <span className={`text-[10px] uppercase tracking-widest font-semibold ${pathname.startsWith('/shop') ? 'text-foreground' : ''}`}>Shop</span>
           </Link>
 
-          {isAuthenticated ? (
-            <Link href="/profile" className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground" aria-label="Profile">
-              <User className={`w-5 h-5 mb-1 ${pathname.startsWith('/profile') ? 'text-foreground' : ''}`} />
-              <span className={`text-[10px] uppercase tracking-widest font-semibold ${pathname.startsWith('/profile') ? 'text-foreground' : ''}`}>Profile</span>
-            </Link>
-          ) : (
-            <Link href="/login" className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground" aria-label="Login">
-              <User className="w-5 h-5 mb-1" />
-              <span className="text-[10px] uppercase tracking-widest font-semibold">Login</span>
-            </Link>
-          )}
+          <Link href={accountUrl} className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground" aria-label="Account">
+            <User className="w-5 h-5 mb-1" />
+            <span className="text-[10px] uppercase tracking-widest font-semibold">Account</span>
+          </Link>
 
-          {/* Cart Drawer Wrapper for Mobile Nav */}
-          <div className="flex flex-col items-center justify-center w-full h-full">
-             <CartDrawer isMobileNav={true} />
-          </div>
+          <button onClick={() => setDrawerOpen(true)} className="flex flex-col items-center justify-center w-full h-full text-muted-foreground hover:text-foreground relative" aria-label="Cart">
+            <ShoppingBag className={`w-5 h-5 mb-1 ${pathname === '/cart' ? 'text-foreground' : ''}`} />
+            {cartCount > 0 && (
+              <Badge className="absolute top-1 right-2 w-4 h-4 flex items-center justify-center p-0 text-[8px]">
+                {cartCount}
+              </Badge>
+            )}
+            <span className={`text-[10px] uppercase tracking-widest font-semibold ${pathname === '/cart' ? 'text-foreground' : ''}`}>Cart</span>
+          </button>
           
         </div>
       </nav>

@@ -1,4 +1,5 @@
-import { getProductsQuery, getProductByHandleQuery, getCollectionProductsQuery, getCartQuery } from './queries';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getProductsQuery, getProductByHandleQuery, getCollectionProductsQuery, getCartQuery, getCollectionsQuery, getProductRecommendationsQuery } from './queries';
 import { cartCreateMutation, cartLinesAddMutation, cartLinesUpdateMutation, cartLinesRemoveMutation } from './mutations';
 
 const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '';
@@ -10,14 +11,32 @@ export interface ShopifyProduct {
   title: string;
   handle: string;
   description: string;
+  tags?: string[];
   priceRange: {
     minVariantPrice: { amount: string; currencyCode: string };
   };
   availableForSale: boolean;
   images: { edges: { node: { url: string; altText?: string } }[] };
-  variants: { edges: { node: { id: string; title: string; availableForSale: boolean; priceV2?: { amount: string; currencyCode: string } } }[] };
+  variants: { edges: { node: { 
+    id: string; 
+    title: string; 
+    availableForSale: boolean; 
+    sku?: string;
+    image?: { url: string; altText?: string };
+    selectedOptions?: { name: string; value: string }[];
+    compareAtPrice?: { amount: string; currencyCode: string };
+    priceV2?: { amount: string; currencyCode: string };
+  } }[] };
   options: { name: string; values: string[] }[];
   seo?: { title: string; description: string };
+}
+
+export interface ShopifyCollection {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  image?: { url: string; altText?: string };
 }
 
 export interface ShopifyCart {
@@ -91,16 +110,34 @@ async function shopifyFetch<T>({ cache = 'force-cache', headers, query, tags, va
   }
 }
 
-export async function getProducts(query?: string): Promise<ShopifyProduct[]> {
+export async function getProducts(options?: { query?: string, sortKey?: string, reverse?: boolean }): Promise<ShopifyProduct[]> {
   try {
     const res = await shopifyFetch<any>({
       query: getProductsQuery,
-      variables: { query },
+      variables: { 
+        query: options?.query,
+        sortKey: options?.sortKey,
+        reverse: options?.reverse
+      },
       tags: ['products']
     });
     return res.body.data.products.edges.map((edge: any) => edge.node);
   } catch (e) {
     console.warn('Shopify API fallback - Returning mock products');
+    return [];
+  }
+}
+
+export async function getProductRecommendations(productId: string): Promise<ShopifyProduct[]> {
+  try {
+    const res = await shopifyFetch<any>({
+      query: getProductRecommendationsQuery,
+      variables: { productId },
+      tags: ['productRecommendations']
+    });
+    return res.body.data.productRecommendations || [];
+  } catch (e) {
+    console.warn('Shopify API fallback - Returning empty recommendations');
     return [];
   }
 }
@@ -118,14 +155,38 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
   }
 }
 
-export async function getCollectionProducts(handle: string): Promise<ShopifyProduct[]> {
+export async function getCollectionProducts(handle: string): Promise<{ collection: ShopifyCollection | null, products: ShopifyProduct[] }> {
   try {
     const res = await shopifyFetch<any>({
       query: getCollectionProductsQuery,
       variables: { handle },
       tags: ['collection']
     });
-    return res.body.data.collection?.products.edges.map((edge: any) => edge.node) || [];
+    const collection = res.body.data.collection;
+    if (!collection) return { collection: null, products: [] };
+    
+    return {
+      collection: {
+        id: collection.id,
+        title: collection.title,
+        handle: collection.handle || handle,
+        description: collection.description,
+        image: collection.image,
+      },
+      products: collection.products.edges.map((edge: any) => edge.node) || []
+    };
+  } catch (e) {
+    return { collection: null, products: [] };
+  }
+}
+
+export async function getCollections(): Promise<ShopifyCollection[]> {
+  try {
+    const res = await shopifyFetch<any>({
+      query: getCollectionsQuery,
+      tags: ['collections']
+    });
+    return res.body.data.collections.edges.map((edge: any) => edge.node);
   } catch (e) {
     return [];
   }

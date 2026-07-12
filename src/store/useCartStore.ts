@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ShopifyCart, createCart, getCart, addToCart, removeFromCart, updateCart } from '../lib/shopify';
+import { toast } from 'sonner';
 
 interface CartState {
   cart: ShopifyCart | null;
   isLoading: boolean;
+  isDrawerOpen: boolean;
+  setDrawerOpen: (isOpen: boolean) => void;
   initCart: () => Promise<void>;
   addItem: (variantId: string, quantity?: number) => Promise<void>;
   removeItem: (lineId: string) => Promise<void>;
@@ -16,6 +20,8 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       cart: null,
       isLoading: false,
+      isDrawerOpen: false,
+      setDrawerOpen: (isOpen) => set({ isDrawerOpen: isOpen }),
       initCart: async () => {
         const { cart } = get();
         if (cart?.id) {
@@ -46,8 +52,9 @@ export const useCartStore = create<CartState>()(
           }
           const updatedCart = await addToCart(cart.id, [{ merchandiseId: variantId, quantity }]);
           set({ cart: updatedCart });
-        } catch (e) {
+        } catch (e: any) {
           console.error('Failed to add item to cart', e);
+          toast.error(e.message || "Failed to add item to cart");
         } finally {
           set({ isLoading: false });
         }
@@ -59,8 +66,9 @@ export const useCartStore = create<CartState>()(
           if (!cart?.id) return;
           const updatedCart = await removeFromCart(cart.id, [lineId]);
           set({ cart: updatedCart });
-        } catch (e) {
+        } catch (e: any) {
           console.error('Failed to remove item from cart', e);
+          toast.error(e.message || "Failed to remove item");
         } finally {
           set({ isLoading: false });
         }
@@ -72,8 +80,9 @@ export const useCartStore = create<CartState>()(
           if (!cart?.id) return;
           const updatedCart = await updateCart(cart.id, [{ id: lineId, quantity }]);
           set({ cart: updatedCart });
-        } catch (e) {
+        } catch (e: any) {
           console.error('Failed to update cart quantity', e);
+          toast.error(e.message || "Failed to update quantity");
         } finally {
           set({ isLoading: false });
         }

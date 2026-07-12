@@ -7,6 +7,8 @@ import { Input } from '../ui/input';
 
 export function Footer() {
   const pathname = usePathname();
+  const shopifyDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '';
+  const accountUrl = shopifyDomain ? `https://${shopifyDomain}/account` : '#';
   
   if (pathname?.startsWith('/admin') || pathname?.startsWith('/auth')) {
     return null;
@@ -56,7 +58,7 @@ export function Footer() {
           <div className="space-y-6">
             <h4 className="text-sm font-semibold uppercase tracking-wider">Support</h4>
             <ul className="space-y-4 text-sm text-background/70">
-              <li><Link href="/track-order" className="hover:text-background transition-colors">Track Order</Link></li>
+              <li><Link href={accountUrl} className="hover:text-background transition-colors">Track Order</Link></li>
               <li><Link href="/faq" className="hover:text-background transition-colors">FAQs</Link></li>
               <li><Link href="/shipping-policy" className="hover:text-background transition-colors">Shipping Policy</Link></li>
               <li><Link href="/refund-policy" className="hover:text-background transition-colors">Returns & Refunds</Link></li>

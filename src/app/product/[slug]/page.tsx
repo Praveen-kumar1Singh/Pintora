@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getProduct, getProducts } from '@/lib/shopify';
+import { getProduct, getProductRecommendations } from '@/lib/shopify';
 import { ProductClient } from './product-client';
 import { Metadata } from 'next';
 
@@ -19,9 +19,22 @@ export async function generateMetadata(
     }
   }
 
+  const imageUrl = product.images.edges[0]?.node.url || '';
+  
   return {
     title: `${product.title} | Printora`,
     description: product.description,
+    openGraph: {
+      title: product.title,
+      description: product.description,
+      images: imageUrl ? [{ url: imageUrl, width: 800, height: 1000, alt: product.title }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: product.title,
+      description: product.description,
+      images: imageUrl ? [imageUrl] : [],
+    }
   }
 }
 
@@ -33,11 +46,33 @@ export default async function ProductPage(props: Props) {
     notFound();
   }
 
-  // Fetch some related products
-  const allProducts = await getProducts();
-  const relatedProducts = allProducts.filter(p => p.id !== product.id).slice(0, 4);
+  // Fetch real related products using Shopify's recommendation API
+  const relatedProducts = await getProductRecommendations(product.id);
+  // Slice to 4 just in case Shopify returns more, to keep the UI clean
+  const displayRelated = relatedProducts.slice(0, 4);
+  
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description,
+    image: product.images.edges[0]?.node.url,
+    sku: product.variants?.edges[0]?.node.sku || product.id,
+    offers: {
+      '@type': 'Offer',
+      price: product.priceRange?.minVariantPrice?.amount,
+      priceCurrency: product.priceRange?.minVariantPrice?.currencyCode,
+      availability: product.availableForSale ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    }
+  };
 
   return (
-    <ProductClient product={product} relatedProducts={relatedProducts} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductClient product={product} relatedProducts={displayRelated} />
+    </>
   );
 }

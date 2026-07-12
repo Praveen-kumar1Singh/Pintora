@@ -6,6 +6,8 @@ import { Footer } from '@/components/layout/Footer';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Toaster } from '@/components/ui/sonner';
 import { Providers } from '@/components/providers';
+import { ThemeProvider } from '@/components/theme-provider';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -67,17 +69,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen flex flex-col antialiased selection:bg-primary selection:text-primary-foreground`}>
-        <Providers>
-          <Navbar />
-          <main className="flex-grow pt-24 md:pt-28">
-            {children}
-          </main>
-          <Footer />
-          <BottomNav />
-          <Toaster />
-        </Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Providers>
+            <Navbar />
+            <main className="flex-grow pt-24 md:pt-18">
+              {children}
+            </main>
+            <Footer />
+            <BottomNav />
+            <CartDrawer />
+            <Toaster />
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -9,16 +9,48 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { useCartStore } from '@/store/useCartStore';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Button } from '@/components/ui/button';
-import { ShopifyProduct } from '@/lib/shopify';
+import { ShopifyProduct, getProduct } from '@/lib/shopify';
+import { Loader2 } from 'lucide-react';
 
 export default function WishlistPage() {
   const [isMounted, setIsMounted] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const wishlistItems = useWishlistStore((state) => state.items);
-  const { removeItem } = useWishlistStore();
+  const { removeItem, syncItems } = useWishlistStore();
   const { addItem: addToCart } = useCartStore();
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Background Sync
+    const syncWishlist = async () => {
+      if (wishlistItems.length === 0) return;
+      
+      setIsSyncing(true);
+      try {
+        const freshProducts = await Promise.all(
+          wishlistItems.map(item => getProduct(item.handle))
+        );
+        
+        // Filter out nulls (products that no longer exist)
+        const validProducts = freshProducts.filter((p): p is ShopifyProduct => p !== null);
+        
+        // Only sync if there's actually a difference in count or data
+        // For simplicity, we just sync to update prices, inventory, etc.
+        if (validProducts.length > 0) {
+          syncItems(validProducts);
+        }
+      } catch (error) {
+        console.error('Failed to sync wishlist:', error);
+      } finally {
+        setIsSyncing(false);
+      }
+    };
+    
+    // Only run this once on mount by checking a ref or just letting it run once
+    // We will let it run once per mount of this page
+    syncWishlist();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleMoveToCart = (product: ShopifyProduct) => {
@@ -34,8 +66,9 @@ export default function WishlistPage() {
     <div className="container mx-auto px-4 lg:px-8 py-12 md:py-20 min-h-[70vh]">
       <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b pb-4">
         <div>
-          <h1 className="text-4xl font-black uppercase tracking-tighter mb-2">
+          <h1 className="text-4xl font-black uppercase tracking-tighter mb-2 flex items-center gap-4">
             Your Wishlist
+            {isSyncing && <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />}
           </h1>
           <p className="text-muted-foreground">{wishlistItems.length} items saved</p>
         </div>
