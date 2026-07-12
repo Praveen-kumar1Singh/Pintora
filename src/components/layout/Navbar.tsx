@@ -88,7 +88,7 @@ export function Navbar() {
                   <nav className="flex flex-col gap-6 mt-10">
                     <Link href="/shop" className={`text-xl font-medium uppercase ${pathname === '/shop' ? 'text-primary font-bold' : ''}`}>Shop</Link>
                     <Link href="/collections" className={`text-xl font-medium uppercase ${pathname === '/collections' ? 'text-primary font-bold' : ''}`}>Collections</Link>
-                    <Link href="/about" className={`text-xl font-medium uppercase ${pathname === '/about' ? 'text-primary font-bold' : ''}`}>About</Link>
+                    <Link href="/" className={`text-xl font-medium uppercase ${pathname === '/' ? 'text-primary font-bold' : ''}`}>Home</Link>
                   </nav>
                 </SheetContent>
               </Sheet>
@@ -162,7 +162,7 @@ export function Navbar() {
 
               <Link href="/collections" className={`py-6 transition-colors ${pathname === '/collections' ? 'text-primary font-bold' : 'hover:text-primary'}`}>Collections</Link>
               <Link href="/shop?sort=newest" className={`py-6 transition-colors ${pathname === '/shop' && (typeof window !== 'undefined' && window.location.search.includes('sort=newest')) ? 'text-primary font-bold' : 'hover:text-primary'}`}>New</Link>
-              <Link href="/about" className={`py-6 transition-colors ${pathname === '/about' ? 'text-primary font-bold' : 'hover:text-primary'}`}>About</Link>
+              <Link href="/" className={`py-6 transition-colors ${pathname === '/' ? 'text-primary font-bold' : 'hover:text-primary'}`}>Home</Link>
             </nav>
 
             {/* Logo */}
