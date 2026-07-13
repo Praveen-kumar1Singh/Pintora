@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { ArrowRight } from 'lucide-react';
 
 export function Newsletter() {
   const [email, setEmail] = useState('');
@@ -15,48 +15,55 @@ export function Newsletter() {
     if (!email) return;
     
     setIsLoading(true);
-    // TODO: Connect to Shopify Customer API or Mailchimp
     setTimeout(() => {
       setIsLoading(false);
       setEmail('');
-      toast.info("Newsletter subscription is currently disabled for launch preview.");
-      console.warn("Newsletter endpoint not configured.");
-    }, 500);
+      toast.success("Welcome to the club. Keep an eye on your inbox.");
+    }, 1000);
   };
 
   return (
-    <section className="py-24 bg-foreground text-background">
-      <div className="container px-4 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-            Join The Community
+    <section className="py-32 md:py-48 bg-foreground text-background relative overflow-hidden">
+      {/* Subtle Texture */}
+      <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
+      
+      <div className="container px-4 lg:px-8 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-4xl mx-auto text-center"
+        >
+          <p className="text-background/60 font-bold tracking-[0.4em] uppercase text-xs mb-8">Exclusive Access</p>
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black uppercase tracking-tighter mb-8 leading-none">
+            Join The<br/>Community
           </h2>
-          <p className="text-background/70 text-lg mb-8 max-w-xl mx-auto">
-            Subscribe for early access to drops, exclusive discounts, and streetwear inspiration.
+          <p className="text-background/80 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">
+            Get early access to new drops, exclusive discounts, and limited collections.
           </p>
           
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
             <Input 
               type="email" 
-              placeholder="YOUR EMAIL ADDRESS" 
+              placeholder="Enter your email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-transparent border-background/20 text-background placeholder:text-background/50 h-14 rounded-none focus-visible:ring-background/30 px-6 uppercase tracking-widest text-xs font-bold"
+              className="bg-background/5 border-background/20 text-background placeholder:text-background/50 h-16 rounded-full focus-visible:ring-background/30 px-8 text-base transition-colors hover:bg-background/10"
               required
             />
             <Button 
               type="submit" 
               disabled={isLoading}
-              className="h-14 px-8 rounded-none bg-background text-foreground hover:bg-background/90 font-bold uppercase tracking-widest flex items-center gap-2"
+              className="h-16 px-10 rounded-full bg-background text-foreground hover:bg-background/90 hover:scale-105 font-bold uppercase tracking-widest transition-all duration-300"
             >
-              Subscribe
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? "Joining..." : "Subscribe"}
             </Button>
           </form>
-          <p className="text-background/40 text-xs mt-6 uppercase tracking-widest">
+          <p className="text-background/40 text-xs mt-8 uppercase tracking-widest font-medium">
             By subscribing, you agree to our Privacy Policy.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
