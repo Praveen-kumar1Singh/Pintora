@@ -20,9 +20,15 @@ interface ProductClientProps {
 }
 
 export function ProductClient({ product, relatedProducts }: ProductClientProps) {
+  const colorOption = product.options?.find(o => o.name.toLowerCase() === 'color');
+  const sizeOption = product.options?.find(o => o.name.toLowerCase() === 'size');
+
+  const colors = colorOption ? colorOption.values : [];
+  const sizes = sizeOption ? sizeOption.values : [];
+
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(colors[0] || null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(sizes[0] || null);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const { addItem: addToCart, isLoading: isCartLoading, setDrawerOpen, cart } = useCartStore();
@@ -33,34 +39,38 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
 
   const [quantity, setQuantity] = useState(1);
 
-  const colorOption = product.options?.find(o => o.name.toLowerCase() === 'color');
-  const sizeOption = product.options?.find(o => o.name.toLowerCase() === 'size');
-
-  const colors = colorOption ? colorOption.values : ['Black', 'White', 'Grey']; // Fallback if no options
-  const sizes = sizeOption ? sizeOption.values : ['S', 'M', 'L', 'XL']; // Fallback if no options
-
 
 
 
 
   const recentlyViewed = useRecentlyViewed(product);
 
+  const getVariant = (color: string | null, size: string | null) => {
+    return product.variants?.edges?.find(v => {
+      let match = true;
+      if (color) {
+        const colorOpt = v.node.selectedOptions?.find(o => o.name.toLowerCase() === 'color');
+        if (colorOpt && colorOpt.value !== color) match = false;
+        else if (!colorOpt && !v.node.title.toLowerCase().includes(color.toLowerCase())) match = false;
+      }
+      if (size) {
+        const sizeOpt = v.node.selectedOptions?.find(o => o.name.toLowerCase() === 'size');
+        if (sizeOpt && sizeOpt.value !== size) match = false;
+        else if (!sizeOpt && !v.node.title.toLowerCase().includes(size.toLowerCase())) match = false;
+      }
+      return match;
+    })?.node;
+  };
+
+  const checkVariantAvailability = (color: string | null, size: string | null) => {
+    const variant = getVariant(color, size);
+    return variant ? variant.availableForSale !== false : false;
+  };
+
   // Compute selected variant based on selected options
-  const selectedVariant = product.variants?.edges?.find(v => {
-    let match = true;
-    if (selectedColor) {
-      const colorOpt = v.node.selectedOptions?.find(o => o.name.toLowerCase() === 'color');
-      if (colorOpt && colorOpt.value !== selectedColor) match = false;
-      // Fallback to title matching if selectedOptions is not fully populated
-      else if (!colorOpt && !v.node.title.toLowerCase().includes(selectedColor.toLowerCase())) match = false;
-    }
-    if (selectedSize) {
-      const sizeOpt = v.node.selectedOptions?.find(o => o.name.toLowerCase() === 'size');
-      if (sizeOpt && sizeOpt.value !== selectedSize) match = false;
-      else if (!sizeOpt && !v.node.title.toLowerCase().includes(selectedSize.toLowerCase())) match = false;
-    }
-    return match;
-  })?.node || product.variants?.edges?.[0]?.node;
+  const selectedVariant = (selectedColor || selectedSize) 
+    ? getVariant(selectedColor, selectedSize) || product.variants?.edges?.[0]?.node
+    : product.variants?.edges?.[0]?.node;
 
   const currentPrice = selectedVariant?.priceV2 
     ? parseFloat(selectedVariant.priceV2.amount) 
@@ -260,14 +270,6 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
                   </>
                 )}
               </div>
-              <div className="flex items-center text-yellow-500 ml-auto opacity-0 hidden">
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current opacity-50" />
-                <span className="text-sm text-muted-foreground ml-2">(128 reviews)</span>
-              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-sm">
@@ -294,19 +296,18 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
                 <h3 className="font-semibold uppercase tracking-wider text-sm mb-3">Color: <span className="font-normal text-muted-foreground">{selectedColor || colors[0]}</span></h3>
                 <div className="flex gap-3 flex-wrap">
                   {colors.map((color) => {
-                    // Very simple mock color mapper
-                    const bgMap: Record<string, string> = { 'black': 'bg-black', 'white': 'bg-white border-border', 'grey': 'bg-gray-400', 'blue': 'bg-blue-600', 'red': 'bg-red-600', 'green': 'bg-green-600' };
-                    const bgClass = bgMap[color.toLowerCase()] || 'bg-black';
-                    const isSelected = selectedColor === color || (!selectedColor && color === colors[0]);
+                    const isAvailableColor = checkVariantAvailability(color, selectedSize);
+                    const isSelected = selectedColor === color;
                     return (
                       <button
                         key={color}
                         onClick={() => handleColorSelect(color)}
                         title={color}
-                        className={`relative w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${isSelected ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-transparent'}`}
+                        disabled={!isAvailableColor}
+                        className={`relative w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${isSelected ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-transparent'} ${!isAvailableColor ? 'opacity-40 cursor-not-allowed' : ''}`}
                       >
-                        <span className={`w-8 h-8 rounded-full border shadow-sm ${bgClass}`} />
-                        {isSelected && <Check className={`absolute w-4 h-4 ${color.toLowerCase() === 'white' ? 'text-black' : 'text-white'}`} />}
+                        <span className="w-8 h-8 rounded-full border shadow-sm" style={{ backgroundColor: color.toLowerCase().replace(' ', '') }} />
+                        {isSelected && <Check className={`absolute w-4 h-4 ${['white', 'light', 'yellow'].some(c => color.toLowerCase().includes(c)) ? 'text-black' : 'text-white'}`} />}
                       </button>
                     );
                   })}
@@ -327,19 +328,24 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`min-w-[3rem] px-3 py-2 text-sm font-medium border rounded-md transition-all ${
-                        selectedSize === size 
-                          ? 'bg-primary text-primary-foreground border-primary' 
-                          : 'hover:border-foreground bg-background'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                  {sizes.map((size) => {
+                    const isAvailableSize = checkVariantAvailability(selectedColor, size);
+                    const isSelected = selectedSize === size;
+                    return (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        disabled={!isAvailableSize}
+                        className={`min-w-[3rem] px-3 py-2 text-sm font-medium border rounded-md transition-all ${
+                          isSelected 
+                            ? 'bg-primary text-primary-foreground border-primary' 
+                            : 'hover:border-foreground bg-background'
+                        } ${!isAvailableSize ? 'opacity-40 cursor-not-allowed line-through text-muted-foreground' : ''}`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -411,14 +417,8 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
             <Accordion defaultValue={['details']}>
               <AccordionItem value="details">
                 <AccordionTrigger className="font-bold uppercase tracking-wider">Product Details</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  <ul className="list-disc pl-4 space-y-2">
-                    <li>100% Premium Combed Cotton</li>
-                    <li>240 GSM heavy-weight fabric</li>
-                    <li>Bio-washed for ultimate softness</li>
-                    <li>Drop shoulder oversized fit</li>
-                    <li>Made in India</li>
-                  </ul>
+                <AccordionContent className="text-muted-foreground leading-relaxed prose prose-sm dark:prose-invert">
+                  <p>{product.description}</p>
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="shipping">

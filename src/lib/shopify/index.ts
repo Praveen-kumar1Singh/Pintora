@@ -55,6 +55,7 @@ export interface ShopifyCart {
         merchandise: {
           id: string;
           title: string;
+          availableForSale: boolean;
           product: {
             id: string;
             title: string;

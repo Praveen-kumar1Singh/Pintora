@@ -30,6 +30,7 @@ const cartFragment = `
           ... on ProductVariant {
             id
             title
+            availableForSale
             product {
               id
               title

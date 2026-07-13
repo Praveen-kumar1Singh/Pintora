@@ -3,14 +3,20 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingBag, X, Plus, Minus, ArrowRight, Trash2 } from 'lucide-react';
+import { ShoppingBag, X, Plus, Minus, ArrowRight, Trash2, Loader2, ChevronLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/useCartStore';
+import { getCart } from '@/lib/shopify';
+import { CheckoutOverlay, CheckoutStatus } from './CheckoutOverlay';
 
 export function CartDrawer() {
   const { cart, isLoading, isDrawerOpen, setDrawerOpen, removeItem, updateQuantity, initCart } = useCartStore();
+  const [actionItemId, setActionItemId] = useState<string | null>(null);
+  const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStatus>('idle');
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   
   useEffect(() => {
     if (isDrawerOpen && !cart) {
@@ -22,12 +28,48 @@ export function CartDrawer() {
   const cartCount = cartLines.reduce((acc: number, edge: any) => acc + edge.node.quantity, 0);
   const subtotal = parseFloat(cart?.cost?.subtotalAmount?.amount || '0');
 
-  const handleCheckout = () => {
-    if (cart?.checkoutUrl) {
-      window.location.href = cart.checkoutUrl;
-    } else {
+  const handleCheckout = async () => {
+    if (!cart?.id) {
       toast.error("Checkout unavailable right now. Please try again later.");
+      return;
     }
+
+    setCheckoutError(null);
+    setCheckoutStatus('loading');
+    
+    try {
+      // Artificial delay for premium transition
+      await new Promise(r => setTimeout(r, 1500));
+      
+      const freshCart = await getCart(cart.id);
+      if (!freshCart) throw new Error("Cart not found or expired.");
+      if (!freshCart.checkoutUrl) throw new Error("Checkout URL is missing.");
+      if (freshCart.lines.edges.length === 0) throw new Error("Your cart is empty.");
+      
+      // Verify variant availability
+      const unavailableItem = freshCart.lines.edges.find((edge: any) => edge.node.merchandise.availableForSale === false);
+      if (unavailableItem) {
+        throw new Error(`"${unavailableItem.node.merchandise.product.title}" is no longer available. Please remove it to continue.`);
+      }
+      
+      useCartStore.setState({ cart: freshCart });
+      window.location.href = freshCart.checkoutUrl;
+    } catch (e: any) {
+      setCheckoutStatus('error');
+      setCheckoutError(e.message || "Failed to prepare checkout. Please try again.");
+    }
+  };
+
+  const handleUpdateQuantity = async (lineId: string, quantity: number) => {
+    setActionItemId(lineId);
+    await updateQuantity(lineId, quantity);
+    setActionItemId(null);
+  };
+
+  const handleRemoveItem = async (lineId: string) => {
+    setActionItemId(lineId);
+    await removeItem(lineId);
+    setActionItemId(null);
   };
 
   return (
@@ -38,6 +80,12 @@ export function CartDrawer() {
             <SheetTitle className="text-xl font-black uppercase tracking-widest flex items-center gap-2">
               <ShoppingBag className="w-5 h-5" /> Your Cart ({cartCount})
             </SheetTitle>
+            <button 
+              onClick={() => setDrawerOpen(false)} 
+              className="text-xs uppercase tracking-widest font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center hidden sm:flex"
+            >
+              Continue Shopping
+            </button>
           </div>
         </SheetHeader>
 
@@ -58,58 +106,83 @@ export function CartDrawer() {
               </Link>
             </div>
           ) : (
-            <div className="space-y-6">
-              {cartLines.map((edge: any) => {
-                const item = edge.node;
-                const product = item.merchandise.product;
-                return (
-                  <div key={item.id} className="flex gap-4 group">
-                    <div className="relative w-24 aspect-[3/4] rounded-md overflow-hidden bg-muted shrink-0">
-                      <Image src={product.images?.edges[0]?.node?.url || ''} alt={product.title} fill className="object-cover" />
-                    </div>
-                    <div className="flex-1 flex flex-col py-1">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <Link href={`/product/${product.handle}`} onClick={() => setDrawerOpen(false)} className="font-bold hover:underline line-clamp-1">
-                            {product.title}
-                          </Link>
-                          <p className="text-sm text-muted-foreground mt-1">{item.merchandise.title}</p>
-                        </div>
-                        <button 
-                          onClick={() => removeItem(item.id)}
-                          className="text-muted-foreground hover:text-destructive transition-colors p-1"
-                          disabled={isLoading}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+            <div className="space-y-6 flex-1 pr-2">
+              <AnimatePresence initial={false}>
+                {cartLines.map((edge: any, index: number) => {
+                  const item = edge.node;
+                  const product = item.merchandise.product;
+                  const imageUrl = item.merchandise.image?.url || product.images?.edges[0]?.node?.url || '';
+                  const isItemLoading = isLoading && actionItemId === item.id;
+                  
+                  return (
+                    <motion.div 
+                      key={item.id} 
+                      layout
+                      initial={{ opacity: 0, height: 0, scale: 0.95, x: 20 }}
+                      animate={{ opacity: 1, height: 'auto', scale: 1, x: 0 }}
+                      exit={{ opacity: 0, height: 0, scale: 0.95, x: -20 }}
+                      transition={{ 
+                        opacity: { duration: 0.2 },
+                        layout: { duration: 0.3 },
+                        default: { type: "spring", stiffness: 300, damping: 24, delay: index * 0.05 }
+                      }}
+                      className="flex gap-4 group"
+                    >
+                      <div className={`relative w-24 aspect-[3/4] rounded-md overflow-hidden bg-muted shrink-0 transition-opacity ${isItemLoading ? 'opacity-50' : 'opacity-100'}`}>
+                        <Image src={imageUrl} alt={product.title} fill className="object-cover" />
+                        {isItemLoading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[2px]">
+                            <Loader2 className="w-5 h-5 animate-spin text-foreground" />
+                          </div>
+                        )}
                       </div>
-                      
-                      <div className="mt-auto flex items-end justify-between">
-                        <div className="flex items-center border rounded-md bg-background">
+                      <div className="flex-1 flex flex-col py-1">
+                        <div className="flex justify-between items-start gap-2">
+                          <div>
+                            <Link href={`/product/${product.handle}`} onClick={() => setDrawerOpen(false)} className="text-sm font-bold uppercase tracking-wide hover:underline line-clamp-1">
+                              {product.title}
+                            </Link>
+                            {item.merchandise.title !== 'Default Title' && (
+                              <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1.5">{item.merchandise.title}</p>
+                            )}
+                          </div>
                           <button 
-                            className="p-1.5 hover:bg-muted transition-colors disabled:opacity-50"
-                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                            disabled={item.quantity <= 1 || isLoading}
-                          >
-                            <Minus className="w-3.5 h-3.5" />
-                          </button>
-                          <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
-                          <button 
-                            className="p-1.5 hover:bg-muted transition-colors disabled:opacity-50"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => handleRemoveItem(item.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1 disabled:opacity-50"
                             disabled={isLoading}
+                            title="Remove item"
                           >
-                            <Plus className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <p className="font-semibold text-base">
-                          {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(parseFloat(item.cost.totalAmount.amount))}
-                        </p>
+                        
+                        <div className="mt-auto flex items-end justify-between">
+                          <div className="flex items-center border rounded-md bg-background overflow-hidden">
+                            <button 
+                              className="p-1.5 hover:bg-muted transition-colors disabled:opacity-50 disabled:bg-muted/50"
+                              onClick={() => handleUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                              disabled={item.quantity <= 1 || isLoading}
+                            >
+                              <Minus className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
+                            <button 
+                              className="p-1.5 hover:bg-muted transition-colors disabled:opacity-50 disabled:bg-muted/50"
+                              onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                              disabled={isLoading}
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                          <p className="font-semibold text-base">
+                            {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(parseFloat(item.cost.totalAmount.amount))}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           )}
         </div>
@@ -123,7 +196,7 @@ export function CartDrawer() {
             <p className="text-xs text-muted-foreground mb-6 text-center">Shipping, taxes, and discount codes calculated at checkout.</p>
             
             <div className="space-y-3">
-              <Button onClick={handleCheckout} disabled={isLoading} className="w-full h-14 text-base uppercase tracking-widest font-black shadow-lg hover:shadow-primary/25 transition-all">
+              <Button onClick={handleCheckout} disabled={isLoading || checkoutStatus === 'loading' || cartLines.length === 0} className="w-full h-14 text-base uppercase tracking-widest font-black shadow-lg hover:shadow-primary/25 transition-all">
                 Checkout
               </Button>
               <Link href="/cart" onClick={() => setDrawerOpen(false)} className="w-full">
@@ -135,6 +208,13 @@ export function CartDrawer() {
           </div>
         )}
       </SheetContent>
+
+      <CheckoutOverlay 
+        status={checkoutStatus} 
+        error={checkoutError}
+        onRetry={handleCheckout}
+        onCancel={() => setCheckoutStatus('idle')}
+      />
     </Sheet>
   );
 }

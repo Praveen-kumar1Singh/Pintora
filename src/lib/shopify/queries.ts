@@ -217,6 +217,7 @@ export const getCartQuery = `
               ... on ProductVariant {
                 id
                 title
+                availableForSale
                 product {
                   id
                   title
