@@ -35,7 +35,7 @@ export function HeroSection() {
             <span className="text-[11px] tracking-[0.2em] uppercase text-foreground/70 font-bold">Summer 26 · New Arrivals</span>
           </motion.div>
 
-          <h1 className="text-[clamp(3.5rem,10vw,8.5rem)] font-heading font-black uppercase tracking-tighter leading-[0.85] text-foreground mb-8">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-semibold uppercase tracking-tighter leading-[0.85] text-foreground mb-8">
             {["ELEVATE", "YOUR STYLE."].map((word, i) => (
               <motion.span
                 key={word}
@@ -131,7 +131,7 @@ export function HeroSection() {
             >
               <div className="text-white">
                 <div className="text-[10px] tracking-[0.2em] font-bold uppercase opacity-80">Featured</div>
-                <div className="text-xl font-heading font-black uppercase tracking-widest mt-1">Heavyweight Hoodie</div>
+                <div className="text-xl font-heading font-semibold uppercase tracking-widest mt-1">Heavyweight Hoodie</div>
                 <div className="text-sm font-medium opacity-90 mt-1">₹4,499 · 340 GSM</div>
               </div>
               <Link href="/shop" className="grid place-items-center w-12 h-12 rounded-full bg-white text-black hover:scale-110 transition-transform">
@@ -169,7 +169,7 @@ export function HeroSection() {
               className="px-5 py-4 rounded-2xl bg-foreground text-background shadow-xl"
             >
               <div className="text-[10px] tracking-[0.15em] font-bold uppercase opacity-70">Rating</div>
-              <div className="text-sm font-heading font-black tracking-widest mt-1">4.9 / 5.0 ★</div>
+              <div className="text-sm font-heading font-semibold tracking-widest mt-1">4.9 / 5.0 ★</div>
             </motion.div>
           </motion.div>
         </div>

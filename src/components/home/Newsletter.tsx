@@ -23,7 +23,7 @@ export function Newsletter() {
   };
 
   return (
-    <section className="py-32 md:py-48 bg-foreground text-background relative overflow-hidden">
+    <section className="py-12 md:py-16 min-h-[50vh] flex items-center justify-center bg-foreground text-background relative overflow-hidden w-full">
       {/* Subtle Texture */}
       <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
       
@@ -33,34 +33,34 @@ export function Newsletter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto text-center"
+          className="max-w-3xl mx-auto text-center"
         >
-          <p className="text-background/60 font-bold tracking-[0.4em] uppercase text-xs mb-8">Exclusive Access</p>
-          <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black uppercase tracking-tighter mb-8 leading-none">
-            Join The<br/>Community
+          <p className="text-background/60 font-bold tracking-[0.4em] uppercase text-[10px] md:text-xs mb-2">Exclusive Access</p>
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-semibold uppercase tracking-tighter mb-2 leading-none">
+            Join The Community
           </h2>
-          <p className="text-background/80 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">
+          <p className="text-background/80 text-sm md:text-base mb-4 max-w-xl mx-auto font-medium">
             Get early access to new drops, exclusive discounts, and limited collections.
           </p>
           
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row justify-center items-center gap-3 max-w-md mx-auto">
             <Input 
               type="email" 
               placeholder="Enter your email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-background/5 border-background/20 text-background placeholder:text-background/50 h-16 rounded-full focus-visible:ring-background/30 px-8 text-base transition-colors hover:bg-background/10"
+              className="bg-background/5 border-background/20 text-background placeholder:text-background/50 h-12 rounded-lg focus-visible:ring-background/30 px-4 text-sm transition-colors hover:bg-background/10 w-full sm:w-64"
               required
             />
             <Button 
               type="submit" 
               disabled={isLoading}
-              className="h-16 px-10 rounded-full bg-background text-foreground hover:bg-background/90 hover:scale-105 font-bold uppercase tracking-widest transition-all duration-300"
+              className="h-12 px-6 rounded-lg bg-background text-foreground hover:bg-background/90 hover:scale-105 font-bold uppercase tracking-widest text-xs transition-all duration-300 whitespace-nowrap w-full sm:w-auto"
             >
               {isLoading ? "Joining..." : "Subscribe"}
             </Button>
           </form>
-          <p className="text-background/40 text-xs mt-8 uppercase tracking-widest font-medium">
+          <p className="text-background/40 text-[10px] mt-6 uppercase tracking-widest font-medium">
             By subscribing, you agree to our Privacy Policy.
           </p>
         </motion.div>

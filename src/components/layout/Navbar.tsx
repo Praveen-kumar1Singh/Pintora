@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Menu, Search, User, Heart, ShoppingBag, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '../../store/useCartStore';
-import { ThemeToggle } from '../theme-toggle';
+import { AnimatedThemeToggler } from '@/registry/magicui/animated-theme-toggler';
 import { SearchOverlay } from '../search/SearchOverlay';
 
 export function Navbar() {
@@ -48,7 +48,16 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Shop", href: "/shop" },
+    { 
+      label: "Shop", 
+      href: "/shop",
+      dropdown: [
+        { label: "All Products", href: "/shop" },
+        { label: "T-Shirts", href: "/shop?category=t-shirts" },
+        { label: "Hoodies", href: "/shop?category=hoodies" },
+        { label: "Accessories", href: "/shop?category=accessories" },
+      ]
+    },
     { label: "New Arrivals", href: "/shop?sort=newest" },
     { label: "Collections", href: "/collections" },
   ];
@@ -77,20 +86,38 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8 h-full">
             {navLinks.map((l) => (
-              <Link
-                key={l.label}
-                href={l.href}
-                className="relative text-[13px] font-bold uppercase tracking-widest text-foreground/80 hover:text-foreground transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-foreground after:transition-all after:duration-300 hover:after:w-full"
-              >
-                {l.label}
-              </Link>
+              <div key={l.label} className="group relative flex items-center h-full">
+                <Link
+                  href={l.href}
+                  className="relative text-[13px] font-bold uppercase tracking-widest text-foreground/80 hover:text-foreground transition-colors after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-foreground after:transition-all after:duration-300 hover:after:w-full py-2"
+                >
+                  {l.label}
+                </Link>
+
+                {l.dropdown && (
+                  <div className="absolute top-[100%] left-1/2 -translate-x-1/2 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
+                    <div className="bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-xl rounded-2xl p-2 w-48 flex flex-col gap-1">
+                      {l.dropdown.map(drop => (
+                        <Link 
+                          key={drop.label} 
+                          href={drop.href}
+                          className="px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest hover:bg-foreground/5 rounded-xl transition-colors text-foreground/80 hover:text-foreground text-center"
+                        >
+                          {drop.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
 
           {/* Icons */}
           <div className="flex items-center gap-1 sm:gap-2">
+            <AnimatedThemeToggler duration={700} className="hidden sm:grid place-items-center w-9 h-9 rounded-full hover:bg-foreground/5 transition-colors text-foreground" variant="circle" />
             <button 
               onClick={() => setIsSearchOpen(true)}
               className="hidden sm:grid place-items-center w-9 h-9 rounded-full hover:bg-foreground/5 transition-colors" 

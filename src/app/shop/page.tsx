@@ -8,11 +8,12 @@ export default async function ShopPage(
 ) {
   const searchParams = await props.searchParams;
   const category = searchParams?.category as string | undefined;
+  const sort = searchParams?.sort as string | undefined;
   
   // Fetch products on the server
   const products = await getProducts();
 
   return (
-    <ShopClient initialProducts={products} initialCategory={category} />
+    <ShopClient initialProducts={products} initialCategory={category} initialSort={sort} />
   );
 }

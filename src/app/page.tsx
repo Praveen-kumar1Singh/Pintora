@@ -68,7 +68,7 @@ export default function Home() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div>
-              <h2 className="text-4xl md:text-6xl font-heading font-black uppercase tracking-tighter mb-4">Best Sellers</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-semibold uppercase tracking-tighter mb-4 text-foreground">Best Sellers</h2>
               <p className="text-muted-foreground max-w-xl text-lg">
                 Our most coveted pieces. Tried, tested, and loved by the community.
               </p>

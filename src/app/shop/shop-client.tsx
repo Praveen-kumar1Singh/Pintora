@@ -16,13 +16,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface ShopClientProps {
   initialProducts: ShopifyProduct[];
   initialCategory?: string;
+  initialSort?: string;
 }
 
 const CATEGORIES = ['All', 'Oversized Tees', 'Hoodies', 'Shirts', 'Joggers', 'Caps', 'Accessories'];
 const SIZES_FALLBACK = ['S', 'M', 'L', 'XL', 'XXL'];
 const COLORS_FALLBACK = ['Black', 'White'];
 
-export function ShopClient({ initialProducts, initialCategory }: ShopClientProps) {
+export function ShopClient({ initialProducts, initialCategory, initialSort }: ShopClientProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [products, setProducts] = useState(initialProducts);
   
@@ -31,11 +32,21 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [sortOption, setSortOption] = useState('featured');
+  const [sortOption, setSortOption] = useState(initialSort || 'featured');
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    setCategory(initialCategory || 'All');
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialSort) {
+      setSortOption(initialSort);
+    }
+  }, [initialSort]);
 
   // Extract real sizes and colors from Shopify products
   const availableSizes = useMemo(() => {
@@ -63,7 +74,10 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
   const filteredProducts = useMemo(() => {
     return initialProducts
       .filter((p) => {
-        if (category !== 'All' && !p.description.includes(category) && !p.title.includes(category)) return false;
+        if (category.toLowerCase() !== 'all') {
+          const searchCat = category.toLowerCase();
+          if (!p.description.toLowerCase().includes(searchCat) && !p.title.toLowerCase().includes(searchCat)) return false;
+        }
         
         const price = parseFloat(p.priceRange.minVariantPrice.amount);
         if (price < priceRange[0] || price > priceRange[1]) return false;
@@ -109,7 +123,7 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
             <li key={cat}>
               <button 
                 onClick={() => setCategory(cat)}
-                className={`transition-colors hover:text-foreground ${category === cat ? 'text-foreground font-semibold' : ''}`}
+                className={`transition-colors hover:text-foreground ${category.toLowerCase() === cat.toLowerCase() ? 'text-foreground font-semibold' : ''}`}
               >
                 {cat}
               </button>
@@ -194,7 +208,7 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
       <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b pb-4">
         <div>
           <h1 className="text-4xl font-black uppercase tracking-tighter mb-2">
-            {category === 'All' ? 'All Products' : category}
+            {category.toLowerCase() === 'all' ? 'All Products' : category}
           </h1>
           <p className="text-muted-foreground">Showing {filteredProducts.length} products</p>
         </div>
@@ -257,17 +271,49 @@ export function ShopClient({ initialProducts, initialCategory }: ShopClientProps
           ) : (
             <>
               {filteredProducts.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  className="py-20 text-center flex flex-col items-center justify-center bg-muted/20 rounded-lg border border-dashed"
-                >
-                  <h3 className="text-xl font-medium mb-2">No products found</h3>
-                  <p className="text-muted-foreground mb-6">We couldn't find anything matching your current filters.</p>
-                  <Button onClick={() => { setCategory('All'); setPriceRange([0,5000]); setSelectedColors([]); setSelectedSizes([]); }}>
-                    Clear Filters
-                  </Button>
-                </motion.div>
+                sortOption === 'newest' ? (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }} 
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="py-32 px-6 text-center flex flex-col items-center justify-center bg-foreground text-background rounded-3xl relative overflow-hidden shadow-2xl"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-transparent opacity-50 mix-blend-overlay"></div>
+                    <motion.div 
+                      animate={{ rotate: [0, 10, -10, 0] }} 
+                      transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                      className="text-6xl mb-6 relative z-10"
+                    >
+                      🚀
+                    </motion.div>
+                    <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4 relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-background via-background/80 to-background">
+                      Dropping Soon
+                    </h3>
+                    <p className="text-background/80 mb-8 max-w-md relative z-10 text-lg">
+                      We're cooking up something extraordinary in our secret lab. Stay tuned for the next exclusive collection!
+                    </p>
+                    <Button 
+                      variant="secondary" 
+                      size="lg"
+                      onClick={() => { setCategory('All'); setSortOption('featured'); setPriceRange([0,5000]); setSelectedColors([]); setSelectedSizes([]); }}
+                      className="relative z-10 rounded-full px-8 py-6 text-sm tracking-widest font-bold uppercase shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)] hover:shadow-[0_0_60px_-15px_rgba(255,255,255,0.8)] transition-all"
+                    >
+                      Explore Current Drops
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    className="py-20 text-center flex flex-col items-center justify-center bg-muted/20 rounded-lg border border-dashed"
+                  >
+                    <h3 className="text-xl font-medium mb-2">No products found</h3>
+                    <p className="text-muted-foreground mb-6">We couldn't find anything matching your current filters.</p>
+                    <Button onClick={() => { setCategory('All'); setPriceRange([0,5000]); setSelectedColors([]); setSelectedSizes([]); }}>
+                      Clear Filters
+                    </Button>
+                  </motion.div>
+                )
               ) : (
                 <motion.div 
                   layout

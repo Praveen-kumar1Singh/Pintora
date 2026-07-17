@@ -52,7 +52,7 @@ export function StatsSection() {
               transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
               className="text-center flex flex-col items-center"
             >
-              <div className="text-4xl md:text-5xl lg:text-6xl font-heading font-black text-foreground mb-3 uppercase tracking-tighter">
+              <div className="text-2xl md:text-4xl lg:text-5xl font-heading font-semibold text-foreground mb-3 uppercase tracking-tighter">
                 {stat.isFloat ? (
                   <span>{stat.number}{stat.suffix}</span>
                 ) : (

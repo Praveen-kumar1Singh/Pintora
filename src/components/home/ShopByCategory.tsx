@@ -19,14 +19,14 @@ export function ShopByCategory({ collections }: ShopByCategoryProps) {
 
   return (
     <section ref={containerRef} className="py-20 md:py-32 bg-background">
-      <div className="container mx-auto px-4 lg:px-8 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="container mx-auto px-4 lg:px-8 mb-16 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h2 className="text-4xl md:text-6xl font-heading font-black uppercase tracking-tighter mb-4 text-foreground">
-            Curated <br />Collections
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading font-semibold uppercase tracking-tighter mb-0 text-foreground">
+            Curated Collections
           </h2>
         </motion.div>
         

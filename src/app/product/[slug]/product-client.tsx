@@ -27,8 +27,8 @@ export function ProductClient({ product, relatedProducts }: ProductClientProps) 
   const sizes = sizeOption ? sizeOption.values : [];
 
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedColor, setSelectedColor] = useState<string | null>(colors[0] || null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(sizes[0] || null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const { addItem: addToCart, isLoading: isCartLoading, setDrawerOpen, cart } = useCartStore();
